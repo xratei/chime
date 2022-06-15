@@ -47,7 +47,7 @@ public class ChimeArmorOverrideLoader implements SimpleResourceReloadListener<Ma
 			applyOverrides(map);
 		});
 	}
-	
+
 	public static void firstLoad() {
 		applyOverrides(loadOverrides(MinecraftClient.getInstance().getResourceManager()));
 	}
@@ -56,7 +56,8 @@ public class ChimeArmorOverrideLoader implements SimpleResourceReloadListener<Ma
 		ModelOverride.Deserializer deserializer = new Deserializer2();
 
 		Map<Identifier, List<ModelOverride>> map = new HashMap<>();
-		for (Identifier id : manager.findResources("overrides/armor", path -> path.endsWith(".json"))) {
+		for (Map.Entry<Identifier,Resource> entry : manager.findResources("overrides/armor", path -> path.getPath().endsWith(".json")).entrySet()) {
+			Identifier id = entry.getKey();
 			String[] parts = id.getPath().split("/");
 			String name = parts[parts.length - 1];
 			name = name.substring(0, name.length() - 5);
@@ -79,7 +80,7 @@ public class ChimeArmorOverrideLoader implements SimpleResourceReloadListener<Ma
 							list.add(override);
 						}
 					} catch (Exception e) {
-						LogManager.getLogger("chime").warn("[chime] Malformed json for armor override: " + r.getId(), e);
+						LogManager.getLogger("chime").warn("[chime] Malformed json for armor override: " + id.getPath(), e);
 					}
 				}
 			} catch (Exception e) {
