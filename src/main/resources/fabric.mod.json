@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "chime",
-  "version": "${version}",
+  "version": "${version}+1.19",
   "name": "Chime",
   "description": "Adds more capabilities to item models",
   "authors": [
