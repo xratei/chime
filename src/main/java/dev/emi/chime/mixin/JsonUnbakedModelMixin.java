@@ -71,21 +71,20 @@ public class JsonUnbakedModelMixin {
 			}
 			Identifier baseId = new Identifier(id);
 			Identifier path = new Identifier(baseId.getNamespace(), "overrides/" + baseId.getPath() + ".json");
-			if (manager.getResource(path).isPresent()) {
-				for (Resource r : manager.getAllResources(path)) {
-					try (InputStreamReader reader = new InputStreamReader(r.getInputStream())) {
-						JsonObject object = GSON.fromJson(reader, JsonObject.class);
-						JsonArray arr = object.getAsJsonArray("overrides");
-						for (JsonElement el : arr) {
-							// What harm could passing null ever have?
-							ModelOverride override = deserializer.deserialize(el, null, null);
-							overrides.add(override);
-						}
-					} catch (Exception e) {
-						LogManager.getLogger("chime").warn("[chime] Malformed json for item override: " + path.getPath(), e);
+
+			for (Resource r : manager.getAllResources(path)) {
+				try (InputStreamReader reader = new InputStreamReader(r.getInputStream())) {
+					JsonObject object = GSON.fromJson(reader, JsonObject.class);
+					JsonArray arr = object.getAsJsonArray("overrides");
+					for (JsonElement el : arr) {
+						// What harm could passing null ever have?
+						overrides.add(deserializer.deserialize(el, null, null));
 					}
+				} catch (Exception e) {
+					LogManager.getLogger("chime").warn("[chime] Malformed json for item override: " + path.getPath(), e);
 				}
 			}
+
 		} catch (Exception e) {
 			LogManager.getLogger("chime").warn("[chime] IO error reading item overrides: " + id, e);
 		}

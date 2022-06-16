@@ -56,14 +56,14 @@ public class ChimeArmorOverrideLoader implements SimpleResourceReloadListener<Ma
 		ModelOverride.Deserializer deserializer = new Deserializer2();
 
 		Map<Identifier, List<ModelOverride>> map = new HashMap<>();
-		for (Map.Entry<Identifier,Resource> entry : manager.findResources("overrides/armor", path -> path.getPath().endsWith(".json")).entrySet()) {
+		for (Map.Entry<Identifier,List<Resource>> entry : manager.findAllResources("overrides/armor", path -> path.getPath().endsWith(".json")).entrySet()) {
 			Identifier id = entry.getKey();
 			String[] parts = id.getPath().split("/");
 			String name = parts[parts.length - 1];
 			name = name.substring(0, name.length() - 5);
 			List<ModelOverride> list = new ArrayList<>();
 			try {
-				for (Resource r : manager.getAllResources(id)) {
+				for (Resource r : entry.getValue()) {
 					try (InputStreamReader reader = new InputStreamReader(r.getInputStream())) {
 						JsonObject object = GSON.fromJson(reader, JsonObject.class);
 						JsonArray arr = object.getAsJsonArray("overrides");
@@ -76,8 +76,7 @@ public class ChimeArmorOverrideLoader implements SimpleResourceReloadListener<Ma
 								obj.getAsJsonObject().addProperty("model", obj.getAsJsonPrimitive("model").getAsString() + ".png");
 							}
 							// What harm could passing null ever have?
-							ModelOverride override = deserializer.deserialize(el, null, null);
-							list.add(override);
+							list.add(deserializer.deserialize(el, null, null));
 						}
 					} catch (Exception e) {
 						LogManager.getLogger("chime").warn("[chime] Malformed json for armor override: " + id.getPath(), e);
