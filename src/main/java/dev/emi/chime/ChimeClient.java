@@ -94,7 +94,7 @@ public class ChimeClient implements ClientModInitializer {
 			if (value.startsWith("/") && value.endsWith("/")) {
 				return Pattern.matches(value.substring(1, value.length() - 1), stack.getName().getString());
 			} else {
-				return value.equals(stack.getName());
+				return value.equals(stack.getName().getString());
 			}
 		});
 		register("hash", HashPredicate.class, (ItemStack stack, ClientWorld world, LivingEntity entity, HashPredicate value) -> {
